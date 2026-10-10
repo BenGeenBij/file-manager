@@ -1,7 +1,7 @@
 📁 PHP MVC File Manager (BenGeenBij/file-manager)
 Een robuuste, razendsnelle en objectgeoriënteerde bestandsbeheerder gebouwd in PHP. Dit project maakt gebruik van het MVC-ontwerppatroon (Model-View-Controller) en biedt gebruikers zowel een veilige, persoonlijke opslagruimte als gedeelde groepsmappen voor vlotte samenwerking.
 
-🚀 Hoe het werkt (Features & Architectuur)
+## 🚀 Hoe het werkt (Features & Architectuur)
 De applicatie is gebouwd om grote hoeveelheden bestanden efficiënt te verwerken zonder de server of de browser te overbelasten.
 
 Persoonlijke & Gedeelde Ruimtes: Elke gebruiker heeft een geïsoleerde privémap (/storage/users/user_[id]). Daarnaast kunnen beheerders gebruikers toevoegen aan groepen, waardoor ze toegang krijgen tot gedeelde mappen (/storage/groups/group_[id]).
@@ -17,7 +17,7 @@ Bulk Acties & Shortcuts: Selecteer razendsnel alles met Ctrl+A. Je kunt in bulk 
 
 
 
-🗄️ Hoe de SQL in elkaar zit (Database Structuur)
+## 🗄️ Hoe de SQL in elkaar zit (Database Structuur)
 Het systeem werkt volledig op basis van database-ID's om paden en rechten te bepalen. Hierdoor is het toewijzen van mappen dynamisch en uiterst veilig. We gebruiken drie tabellen:
 
 users: Bevat de accounts. In plaats van een hardcoded pad in de database te zetten, berekent de app de persoonlijke map automatisch aan de hand van het id (bijv. user_1).
