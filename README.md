@@ -1,21 +1,19 @@
-# PHP MVC File Manager
+📁 PHP MVC File Manager (BenGeenBij/file-manager)
+Een robuuste, razendsnelle en objectgeoriënteerde bestandsbeheerder gebouwd in PHP. Dit project maakt gebruik van het MVC-ontwerppatroon (Model-View-Controller) en biedt gebruikers zowel een veilige, persoonlijke opslagruimte als gedeelde groepsmappen voor vlotte samenwerking.
 
-Een lichtgewicht, veilige en multi-user bestandsbeheerder voor het web. 
+🚀 Hoe het werkt (Features & Architectuur)
+De applicatie is gebouwd om grote hoeveelheden bestanden efficiënt te verwerken zonder de server of de browser te overbelasten.
 
-Deze applicatie is een gemoderniseerde, modulaire herschrijving van de originele [Tiny File Manager](https://tinyfilemanager.github.io/). Het originele monolithische script is opgesplitst in een schone **MVC-architectuur** (Model-View-Controller) en uitgebreid met **MySQL-database integratie** voor robuust gebruikersbeheer en map-isolatie.
+Persoonlijke & Gedeelde Ruimtes: Elke gebruiker heeft een geïsoleerde privémap (/storage/users/user_[id]). Daarnaast kunnen beheerders gebruikers toevoegen aan groepen, waardoor ze toegang krijgen tot gedeelde mappen (/storage/groups/group_[id]).
 
-## ✨ Kenmerken
+Geavanceerde Uploads (Chunking): Bestanden worden geüpload via Dropzone.js. Grote bestanden worden in stukjes ("chunks") geknipt en naar de API gestuurd. Hierdoor kun je de PHP upload_max_filesize limieten omzeilen en bestanden van gigabytes groot veilig overzetten.
 
-* **Multi-User Ondersteuning:** Beheer meerdere gebruikers via een MySQL-database.
-* **Map Isolatie:** Elke gebruiker krijgt zijn eigen, afgeschermde map binnen de hoofd `/storage` directory.
-* **MVC Architectuur:** Logica, configuratie en weergave (UI) zijn strikt gescheiden voor makkelijker onderhoud.
-* **Beveiliging voorop:**
-  * Beveiligd tegen SQL-injecties middels **PDO prepared statements**.
-  * Beveiligd tegen **CSRF-aanvallen** met dynamische sessietokens.
-  * Strenge pad-validatie (`realpath`) om **Directory Traversal** (`../`) te voorkomen.
-  * Wachtwoorden worden veilig gehasht met `password_hash()` (Bcrypt).
-* **Moderne UI:** Volledig responsive interface gebouwd met **Bootstrap 5** en FontAwesome iconen.
-* **Bestandsbeheer:** Uploaden, mappen aanmaken, bestanden bewerken, verwijderen en downloaden.
+Slimme Sortering & Weergave: Gebruikers kunnen naadloos schakelen tussen een lijst- en tegelweergave (voorkeur wordt opgeslagen in localStorage). De lijstweergave is volledig client-side sorteerbaar (op naam, bestandstype, grootte en datum) zonder de pagina opnieuw te laden. Mappen blijven hierbij altijd slim bovenaan staan.
+
+Performance & Caching: Thumbnails voor afbeeldingen worden server-side gegenereerd via de GD-bibliotheek en opgeslagen in een tijdelijke cache. Er wordt gebruikgemaakt van HTTP 304 Not Modified browser caching, waardoor fotogalerijen razendsnel inladen. Video's en documenten krijgen dynamische FontAwesome-iconen.
+
+Bulk Acties & Shortcuts: Selecteer razendsnel alles met Ctrl+A. Je kunt in bulk bestanden verwijderen of mappen in hun geheel downloaden als een on-the-fly gegenereerd ZIP-archief.
+
 
 ## 📂 Mappenstructuur
 
@@ -33,3 +31,59 @@ Deze applicatie is een gemoderniseerde, modulaire herschrijving van de originele
 │   ├── ApiController.php     # Verwerkt POST acties (opslaan, verwijderen, uploaden)
 │   └── ViewController.php    # Bepaalt welke weergave geladen wordt
 └── views/                    # HTML/Bootstrap templates (header, footer, login, tabel, editor)
+
+
+
+🗄️ Hoe de SQL in elkaar zit (Database Structuur)
+Het systeem werkt volledig op basis van database-ID's om paden en rechten te bepalen. Hierdoor is het toewijzen van mappen dynamisch en uiterst veilig. We gebruiken drie tabellen:
+
+users: Bevat de accounts. In plaats van een hardcoded pad in de database te zetten, berekent de app de persoonlijke map automatisch aan de hand van het id (bijv. user_1).
+
+groups: Bevat de gedeelde ruimtes.
+
+user_groups: Een relationele koppeltabel. Deze vertelt de applicatie welke gebruiker lid is van welke groep(en).
+
+Database Installatie Script
+Voer de onderstaande SQL-query's uit in je database (bijvoorbeeld via phpMyAdmin of de terminal) om de structuur op te zetten:
+
+SQL
+-- 1. Gebruikers Tabel
+CREATE TABLE IF NOT EXISTS `users` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `username` VARCHAR(50) NOT NULL UNIQUE,
+    `password_hash` VARCHAR(255) NOT NULL,
+    `role` VARCHAR(20) DEFAULT 'user',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. Groepen Tabel (Voor gedeelde ruimtes)
+CREATE TABLE IF NOT EXISTS `groups` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `name` VARCHAR(100) NOT NULL UNIQUE,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 3. Koppeltabel (Veel-op-veel relatie tussen users en groups)
+CREATE TABLE IF NOT EXISTS `user_groups` (
+    `user_id` INT NOT NULL,
+    `group_id` INT NOT NULL,
+    PRIMARY KEY (`user_id`, `group_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`group_id`) REFERENCES `groups`(`id`) ON DELETE CASCADE
+);
+Voorbeeld van rechten toewijzen
+Om dit in de praktijk te testen, kun je jezelf direct lid maken van een groep. Als jouw gebruiker id = 1 heeft:
+
+SQL
+-- Maak een testaccount aan (wachtwoord is 'welkom123' via password_hash)
+INSERT INTO `users` (`username`, `password_hash`, `role`) 
+VALUES ('admin', '$2y$10$O9wO/L.R3aK7vJgU0D6y.OQ0Xj8m4O5O5O5O5O5O5O5O5O5O5O5O5', 'admin');
+
+-- Maak een groep aan genaamd 'Management'
+INSERT INTO `groups` (`id`, `name`) VALUES (1, 'Management');
+
+-- Geef de admin (user 1) toegang tot de Management map (group 1)
+INSERT INTO `user_groups` (`user_id`, `group_id`) VALUES (1, 1);
+Zodra je nu inlogt, verschijnt er in de interface een knop "Management". Als je hierop klikt, wordt (indien deze nog niet bestaat) automatisch de map storage/groups/group_1/ op de server aangemaakt en kun je bestanden delen met alle andere leden van die groep.
+
+
