@@ -29,7 +29,7 @@ user_groups: Een relationele koppeltabel. Deze vertelt de applicatie welke gebru
 Database Installatie Script
 Voer de onderstaande SQL-query's uit in je database (bijvoorbeeld via phpMyAdmin of de terminal) om de structuur op te zetten:
 
-SQL
+## SQL
 -- 1. Gebruikers Tabel
 CREATE TABLE IF NOT EXISTS `users` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
