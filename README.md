@@ -54,20 +54,7 @@ CREATE TABLE IF NOT EXISTS `user_groups` (
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
     FOREIGN KEY (`group_id`) REFERENCES `groups`(`id`) ON DELETE CASCADE
 );
-Voorbeeld van rechten toewijzen
-Om dit in de praktijk te testen, kun je jezelf direct lid maken van een groep. Als jouw gebruiker id = 1 heeft:
 
-SQL
--- Maak een testaccount aan (wachtwoord is 'welkom123' via password_hash)
-INSERT INTO `users` (`username`, `password_hash`, `role`) 
-VALUES ('admin', '$2y$10$O9wO/L.R3aK7vJgU0D6y.OQ0Xj8m4O5O5O5O5O5O5O5O5O5O5O5O5', 'admin');
-
--- Maak een groep aan genaamd 'Management'
-INSERT INTO `groups` (`id`, `name`) VALUES (1, 'Management');
-
--- Geef de admin (user 1) toegang tot de Management map (group 1)
-INSERT INTO `user_groups` (`user_id`, `group_id`) VALUES (1, 1);
-Zodra je nu inlogt, verschijnt er in de interface een knop "Management". Als je hierop klikt, wordt (indien deze nog niet bestaat) automatisch de map storage/groups/group_1/ op de server aangemaakt en kun je bestanden delen met alle andere leden van die groep.
 
 ## 📂 Mappenstructuur
 
