@@ -15,23 +15,6 @@ Performance & Caching: Thumbnails voor afbeeldingen worden server-side gegeneree
 Bulk Acties & Shortcuts: Selecteer razendsnel alles met Ctrl+A. Je kunt in bulk bestanden verwijderen of mappen in hun geheel downloaden als een on-the-fly gegenereerd ZIP-archief.
 
 
-## 📂 Mappenstructuur
-
-```text
-/
-├── index.php                 # Hoofdroutering
-├── config/
-│   ├── config.php            # Algemene instellingen & sessiebeheer
-│   └── database.php          # PDO MySQL connectie
-├── core/                     
-│   ├── Auth.php              # Login, validatie en sessie logica
-│   ├── FileOperations.php    # Functies voor kopiëren, verplaatsen, ZIP, etc.
-│   └── Helpers.php           # Bestandsgrootte en iconen formatteren
-├── controllers/
-│   ├── ApiController.php     # Verwerkt POST acties (opslaan, verwijderen, uploaden)
-│   └── ViewController.php    # Bepaalt welke weergave geladen wordt
-└── views/                    # HTML/Bootstrap templates (header, footer, login, tabel, editor)
-
 
 
 🗄️ Hoe de SQL in elkaar zit (Database Structuur)
@@ -86,4 +69,19 @@ INSERT INTO `groups` (`id`, `name`) VALUES (1, 'Management');
 INSERT INTO `user_groups` (`user_id`, `group_id`) VALUES (1, 1);
 Zodra je nu inlogt, verschijnt er in de interface een knop "Management". Als je hierop klikt, wordt (indien deze nog niet bestaat) automatisch de map storage/groups/group_1/ op de server aangemaakt en kun je bestanden delen met alle andere leden van die groep.
 
+## 📂 Mappenstructuur
 
+```text
+/
+├── index.php                 # Hoofdroutering
+├── config/
+│   ├── config.php            # Algemene instellingen & sessiebeheer
+│   └── database.php          # PDO MySQL connectie
+├── core/                     
+│   ├── Auth.php              # Login, validatie en sessie logica
+│   ├── FileOperations.php    # Functies voor kopiëren, verplaatsen, ZIP, etc.
+│   └── Helpers.php           # Bestandsgrootte en iconen formatteren
+├── controllers/
+│   ├── ApiController.php     # Verwerkt POST acties (opslaan, verwijderen, uploaden)
+│   └── ViewController.php    # Bepaalt welke weergave geladen wordt
+└── views/                    # HTML/Bootstrap templates (header, footer, login, tabel, editor)
